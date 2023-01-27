@@ -28,20 +28,19 @@ import Header from "components/Headers/SimpleHeader.js";
 import moment from "moment";
 function Tables() {
     const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
-    console.log(data?.data)
+    const [page, setPage] = useState(1)
     useEffect(() => {
-        setLoading(true)
-        fetch('http://localhost:1337/api/atestados')
+        fetch(`http://localhost:1337/api/atestados?pagination[page]=${page}&pagination[pageSize]=2`)
             .then((res) => res.json())
             .then((data) => {
-                setData(data.data)
-                setLoading(false)
+                setData(data)
             })
-    }, [])
+    }, [page])
+
+
     return (
         <>
-            <Header />
+            <Header page={page} setData={setData} />
             {/* Page content */}
             <Container className="mt--7" fluid>
                 {/* Table */}
@@ -68,7 +67,7 @@ function Tables() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data.length > 0 && data.map((value, index) => {
+                                    {data?.data?.length > 0 && data?.data.map((value, index) => {
                                         return <>
                                             <tr onClick={() => { sessionStorage.setItem('certificate', JSON.stringify(value)); Router.push('certificate/update') }} style={{ cursor: 'pointer' }} key={index} >
                                                 <th scope="row">
@@ -128,11 +127,12 @@ function Tables() {
                                         className="pagination justify-content-end mb-0"
                                         listClassName="justify-content-end mb-0"
                                     >
-                                        <PaginationItem className="disabled">
+                                        <PaginationItem className={page > 1 ? "" : "disabled"}>
                                             <PaginationLink
                                                 href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
+                                                onClick={(e) => setPage(page - 1)}
                                                 tabIndex="-1"
+                                                disabled={page > 1 ? true : false}
                                             >
                                                 <i className="fas fa-angle-left" />
                                                 <span className="sr-only">Previous</span>
@@ -143,36 +143,23 @@ function Tables() {
                                                 href="#pablo"
                                                 onClick={(e) => e.preventDefault()}
                                             >
-                                                1
+                                                {page}
                                             </PaginationLink>
                                         </PaginationItem>
-                                        <PaginationItem>
+                                        <PaginationItem className={page == data?.meta?.pagination?.pageCount ? "disabled" : ""}>
                                             <PaginationLink
                                                 href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                2 <span className="sr-only">(current)</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                3
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
+                                                onClick={(e) => setPage(page + 1)}
+                                                disabled={page == data?.meta?.pagination?.pageCount ? true : false}
                                             >
                                                 <i className="fas fa-angle-right" />
                                                 <span className="sr-only">Next</span>
                                             </PaginationLink>
                                         </PaginationItem>
                                     </Pagination>
+                                    <p> Total de páginas: {data?.meta?.pagination?.pageCount}</p>
                                 </nav>
+
                             </CardFooter>
                         </Card>
                     </div>

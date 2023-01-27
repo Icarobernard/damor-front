@@ -363,9 +363,9 @@ function Register() {
                                                         className="form-control-label"
                                                         htmlFor="input-phone"
                                                     >
-                                                        O tratamento é consequência de acidente de trabalho?
+                                                        O tratamento é consequência de acidente de trabalho? 
                                                     </label>
-                                                    <div className=" custom-control custom-radio custom-control-inline">
+                                                    <div className="custom-control custom-radio custom-control-inline">
                                                         <input
                                                             className=" custom-control-input"
                                                             id="customRadioInline1"
